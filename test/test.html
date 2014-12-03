@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="OBJLoader.js"></script>
+		<script src="TrackballControls.js"></script>
+		<script src="octree.js"></script>
+		<script src="TriangleBox.js"></script>
+		<script>
+function Start()
+{
+	scene = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera(75, 640/480, 0.1, 1000);
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize(640, 480);
+	document.body.appendChild(renderer.domElement);
+	material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+	geometry = new THREE.SphereGeometry(2, 16, 16);
+	mesh = new THREE.Mesh(geometry, material);
+	of = [];
+	for(var i = 0; i < geometry.faces.length; i++)
+	{
+		of.push
+		([
+			[geometry.vertices[geometry.faces[i].a].x, geometry.vertices[geometry.faces[i].a].y, geometry.vertices[geometry.faces[i].a].z],
+			[geometry.vertices[geometry.faces[i].b].x, geometry.vertices[geometry.faces[i].b].y, geometry.vertices[geometry.faces[i].b].z],
+			[geometry.vertices[geometry.faces[i].c].x, geometry.vertices[geometry.faces[i].c].y, geometry.vertices[geometry.faces[i].c].z]
+		]);
+	}
+	octree = new Octree(of);
+	scene.add(octree.CreateMesh("red"));
+	scene.add(mesh);
+	camera.position.set(-5, -0, -0);
+	camera.lookAt(mesh.position);
+	
+	controls = new THREE.TrackballControls(camera);
+	controls.rotateSpeed = 1.0;
+	controls.zoomSpeed = 1.2;
+	controls.panSpeed = 0.8;
+	controls.noZoom = false;
+	controls.noPan = false;
+	controls.staticMoving = true;
+	controls.dynamicDampingFactor = 0.3;
+	controls.keys = [65, 83, 68];
+	
+	Render();
+}
+
+function Render()
+{
+	requestAnimationFrame(Render);
+	//camera.position.set(-5, -0, -0);
+	//camera.lookAt(mesh.position);
+	controls.update();
+	renderer.render(scene, camera);
+}
+		</script>
+	</head>
+	<body onload="Start()">
+	</body>
+</html>
